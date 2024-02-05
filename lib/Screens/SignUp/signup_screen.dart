@@ -27,28 +27,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: BlocBuilder<SignupBloc, SignupState>(
           builder: (context, state) {
             if(state is SendOTPState){
-              // return SizedBox(
-              //   child: AlertDialog(
-              //     title: const Text('Enter OTP'),
-              //     content:  OtpTextField(
-              //       numberOfFields: 6,
-              //       borderColor: const Color(0xFF512DA8),
-              //       showFieldAsBox: true,
-              //       onSubmit: (String verificationCode){
-              //         context.read<SignupBloc>().add(
-              //           VerifyOTPEvent(
-              //             name: nameController.text,
-              //             email: emailController.text,
-              //             password: passwordController.text,
-              //             username: usernameController.text,
-              //             confirmPass: confirmPasswordController.text,
-              //             otp: verificationCode,
-              //           ),
-              //         );
-              //       },
-              //     ),
-              //   ),
-              // );
               return Column(
                 children: [
                   SizedBox(
@@ -87,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             }
             if(state is SignUPDoneState){
               Future.delayed(const Duration(milliseconds: 100), () {
-                GoRouter.of(context).pushNamed("Login");
+                GoRouter.of(context).pushReplacementNamed("Login");
               });
               return Container();
             }
