@@ -1,5 +1,6 @@
 import 'package:code_school/Screens/HomeScreen/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import '../Repositories/Auth/login_repo.dart';
 import '../Repositories/Auth/signup_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import '../Screens/Login/bloc/login_bloc.dart';
 import '../Screens/Login/login_screen.dart';
 import '../Screens/SignUp/bloc/signup_bloc.dart';
 import '../Screens/SignUp/signUp_screen.dart';
+import 'error_page.dart';
 
 class MyRouter{
   // final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -58,8 +60,26 @@ class MyRouter{
         }
     ),
 
+  ],
+          errorBuilder: (context,state){
+           return const ErrorPage();
+          },
+          redirect: (context,state)async{
+            var box = await Hive.openBox('jwt');
+            var item = box.values.toList();
 
-  ]
+            if (item.isNotEmpty) {
+              var isLoggedIn = item[0].jwt != null;
+
+              if (isLoggedIn) {
+                return '/Home';
+              } else {
+                return '/';
+              }
+            } else {
+              return '/';
+            }
+      }
 
   );
 }
