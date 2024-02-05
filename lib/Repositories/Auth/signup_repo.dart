@@ -22,6 +22,9 @@ class SignUpRepo{
   Future<void>signUP(String name,String email,String password,String username,String confirmPass,String otp)async{
         final response=await http.post(
           Uri.parse("$authUrl/signup"),
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: jsonEncode(
             {
               'name':name,

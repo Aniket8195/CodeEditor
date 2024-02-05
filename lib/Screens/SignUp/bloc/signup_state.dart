@@ -27,6 +27,13 @@ class SignUPDoneState extends SignupState{
   List<Object?> get props => [];
 
 }
+class SignUPLoadingState extends SignupState{
+
+
+  @override
+  List<Object?> get props => [];
+
+}
 class SignupErrorState extends SignupState{
   final String error;
   SignupErrorState(this.error);

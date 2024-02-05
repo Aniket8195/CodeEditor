@@ -13,43 +13,72 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final emailController = TextEditingController();
-    final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmPasswordController = TextEditingController();
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: BlocBuilder<SignupBloc, SignupState>(
           builder: (context, state) {
             if(state is SendOTPState){
-              return SizedBox(
-
-                child: AlertDialog(
-                  title: const Text('Enter OTP'),
-                  content:  OtpTextField(
-                    numberOfFields: 6,
-                    borderColor: const Color(0xFF512DA8),
-                    showFieldAsBox: true,
-                    onSubmit: (String verificationCode){
-                      context.read<SignupBloc>().add(
-                        VerifyOTPEvent(
-                          name: nameController.text,
-                          email: emailController.text,
-                          password: passwordController.text,
-                          username: usernameController.text,
-                          confirmPass: confirmPasswordController.text,
-                          otp: verificationCode,
-                        ),
-                      );
-                    },
+              // return SizedBox(
+              //   child: AlertDialog(
+              //     title: const Text('Enter OTP'),
+              //     content:  OtpTextField(
+              //       numberOfFields: 6,
+              //       borderColor: const Color(0xFF512DA8),
+              //       showFieldAsBox: true,
+              //       onSubmit: (String verificationCode){
+              //         context.read<SignupBloc>().add(
+              //           VerifyOTPEvent(
+              //             name: nameController.text,
+              //             email: emailController.text,
+              //             password: passwordController.text,
+              //             username: usernameController.text,
+              //             confirmPass: confirmPasswordController.text,
+              //             otp: verificationCode,
+              //           ),
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // );
+              return Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height*0.5,
                   ),
-                ),
+                  OtpTextField(
+                  numberOfFields: 6,
+                  borderColor: const Color(0xFF512DA8),
+                  showFieldAsBox: true,
+                  onSubmit: (String verificationCode){
+                   context.read<SignupBloc>().add(
+                  VerifyOTPEvent(
+                    name: nameController.text,
+                    email: emailController.text,
+                    password: passwordController.text,
+                    username: usernameController.text,
+                    confirmPass: confirmPasswordController.text,
+                    otp: verificationCode,
+               ),
+               );
+               },
+               ),
+                ],
               );
 
+            }
+            if(state is SignUPLoadingState){
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
             if(state is SubmitOTPState){
               return const Center(
@@ -57,7 +86,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               );
             }
             if(state is SignUPDoneState){
-              GoRouter.of(context).go('/Login');
+              Future.delayed(const Duration(milliseconds: 100), () {
+                GoRouter.of(context).pushNamed("Login");
+              });
               return Container();
             }
             if (state is SignupErrorState) {

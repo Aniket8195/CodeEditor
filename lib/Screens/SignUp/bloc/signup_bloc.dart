@@ -14,6 +14,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   SignupBloc(this.signUpRepo) : super(SignupInitial()) {
     on<SendOTPEvent>((event, emit)async {
       try {
+        emit(SignUPLoadingState());
         await signUpRepo.sendOTP(event.email);
         emit(SendOTPState());
       } catch (error) {
