@@ -21,7 +21,7 @@ class MyRouter{
              return RepositoryProvider(
                create: (context)=>SignUpRepo(),
                child: BlocProvider(
-                 create: (context)=>SignupBloc(),
+                 create: (context)=>SignupBloc(context.read<SignUpRepo>()),
                  child: const SignUpScreen(),
                ),
              );
