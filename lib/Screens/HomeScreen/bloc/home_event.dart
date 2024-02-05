@@ -8,3 +8,8 @@ class LogoutEvent extends HomeEvent{
   @override
   List<Object?> get props => [];
 }
+class LoadingEvent extends HomeEvent{
+
+  @override
+  List<Object?> get props => [];
+}
