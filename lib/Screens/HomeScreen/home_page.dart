@@ -1,6 +1,7 @@
 import 'package:code_school/Repositories/Problems/problems_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../Repositories/Compiler/compile_repo.dart';
 import '../ProblemScreen/bloc/solve_bloc.dart';
 import '../ProblemScreen/problem.dart';
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
               );
             }
             if (state is Logout) {
-              Navigator.of(context).pushReplacementNamed("Login");
+             GoRouter.of(context).go("/");
               return Container();
             }
             if (state is ErrorState) {

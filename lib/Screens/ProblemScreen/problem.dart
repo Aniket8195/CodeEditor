@@ -1,5 +1,7 @@
+import 'package:code_school/Screens/ProblemScreen/problem_details.dart';
 import 'package:flutter/material.dart';
 import '../../Models/problem_model.dart';
+import 'code_section.dart';
 
 class ProblemSolve extends StatefulWidget {
   final Problem problem;
@@ -12,18 +14,30 @@ class ProblemSolve extends StatefulWidget {
 class _ProblemSolveState extends State<ProblemSolve> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Solve Problem'),
-      ),
-     body: Center(
-          child: Column(
-            children: [
-              Text(widget.problem.problem),
-              Text(widget.problem.problemTitle),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Solve Problem'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(
+                text: 'Problem',
+              ),
+              Tab(
+                text: 'Code',
+              ),
             ],
+
           ),
         ),
+       body: TabBarView(
+         children: [
+           showProblem(widget.problem),
+           CodeScreen(problem:widget.problem),
+         ],
+       )
+      ),
     );
   }
 }

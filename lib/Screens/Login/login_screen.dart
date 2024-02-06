@@ -1,7 +1,13 @@
+import 'package:code_school/Repositories/Problems/problems_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../Repositories/Auth/signup_repo.dart';
+import '../HomeScreen/bloc/home_bloc.dart';
+import '../HomeScreen/home_page.dart';
+import '../SignUp/bloc/signup_bloc.dart';
+import '../SignUp/signUp_screen.dart';
 import 'bloc/login_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,7 +60,19 @@ class _LoginScreenState extends State<LoginScreen> {
                    ),
                    ElevatedButton(
                        onPressed: (){
-                         GoRouter.of(context).go("/SignUp");
+                         Navigator.push(
+                           context,
+                           MaterialPageRoute(
+                             builder: (context) => RepositoryProvider(
+                               create: (context)=>SignUpRepo(),
+                               child: BlocProvider(
+                                 create: (context)=>SignupBloc(context.read<SignUpRepo>()),
+                                 child: const SignUpScreen(),
+                               ),
+                             ),
+                           ),
+                         );
+
                        },
                        child: const Text("Sign Up")
                    )
@@ -67,7 +85,18 @@ class _LoginScreenState extends State<LoginScreen> {
            Future.delayed(const Duration(milliseconds: 100), () {
              GoRouter.of(context).pushReplacementNamed("Home");
            });
-
+           // Navigator.pushReplacement(
+           //   context,
+           //   MaterialPageRoute(
+           //     builder: (context) => RepositoryProvider(
+           //       create: (context) => ProblemRepo(),
+           //       child: BlocProvider(
+           //         create: (context) => HomeBloc(context.read<ProblemRepo>()),
+           //         child: const HomePage(),
+           //       ),
+           //     ),
+           //   ),
+           // );
            return Container();
          }
          if(state is LoginLoadingState){
