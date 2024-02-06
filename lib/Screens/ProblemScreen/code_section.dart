@@ -1,7 +1,9 @@
 import 'package:code_school/Screens/ProblemScreen/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import '../../Models/problem_model.dart';
+import 'bloc/Compiler/compiler_bloc.dart';
 import 'dropdown_selector.dart';
 import 'snippets.dart';
 import 'package:code_school/Constants/const.dart';
@@ -29,17 +31,17 @@ class CodeScreen extends StatefulWidget {
 class _CodeScreenState extends State<CodeScreen> {
   String _language = _defaultLanguage;
   String _theme = _defaultTheme;
-  String? _code = _defaultCode;
-  AbstractAnalyzer _analyzer = _defaultAnalyzer;
-  bool _showNumbers = true;
-  bool _showErrors = true;
-  bool _showFoldingHandles = true;
+  final String? _code = _defaultCode;
+  final bool _showNumbers = true;
+  final bool _showErrors = true;
+  final bool _showFoldingHandles = true;
   final _codeFieldFocusNode = FocusNode();
   late final _codeController = CodeController(
     language: builtinLanguages[_language],
     namedSectionParser: const BracketsStartEndNamedSectionParser(),
     text: _code,
   );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +94,12 @@ class _CodeScreenState extends State<CodeScreen> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          BlocProvider.of<CompilerBloc>(context).add(CompilerSubmit(problem: widget.problem,language: _language,code:_codeController.text));
+        },
+        child: const Icon(Icons.send),
+      ),
     );
   }
   @override
@@ -110,23 +118,77 @@ class _CodeScreenState extends State<CodeScreen> {
     setState(() {
       _language = value;
       _codeController.language = builtinLanguages[value];
-      _analyzer = _defaultAnalyzer;
       _codeController.text =codeSnippets[value]!;
       _codeFieldFocusNode.requestFocus();
     });
   }
 
-  void _setAnalyzer(AbstractAnalyzer value) {
-    setState(() {
-      _codeController.analyzer = value;
-      _analyzer = value;
-    });
-  }
 
   void _setTheme(String value) {
     setState(() {
       _theme = value;
       _codeFieldFocusNode.requestFocus();
     });
+  }
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<CompilerBloc>(context).stream.listen((state) {
+      if (state is CompilerSubmitState) {
+        _showResultBottomSheet();
+      }
+      if(state is CompilerDone){
+        _showResultBottomSheetR('Compiled Successfully',state.testCases,state.testCaseResults);
+      }
+      if(state is CompilerError){
+        _showResultBottomSheetW(state.message);
+      }
+    });
+  }
+  void _showResultBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void _showResultBottomSheetW(String result) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: Text(result),
+        );
+      },
+    );
+  }
+  void _showResultBottomSheetR(String result,List<TestCase>testCases,List<bool>testCaseResults) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.builder(
+                 // shrinkWrap: true,
+                  itemCount: testCases.length,
+                  itemBuilder: (context,index) {
+                     return (index > 0) ? ListTile(
+                      title: Text(testCases[index].input),
+                      subtitle: Text(testCases[index].output),
+                      trailing: testCaseResults[index]?const Icon(Icons.check,color: Colors.green,):const Icon(Icons.close,color: Colors.red,),
+                    ) : const SizedBox();
+                  },
+                ),
+              ],
+            ),
+          );
+
+      },
+    );
   }
 }
