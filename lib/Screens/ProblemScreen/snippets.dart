@@ -1,54 +1,25 @@
-const javaFactorialSnippet = '''
+const Map<String, String> codeSnippets = {
+  'java': '''
 class MyClass {
-  /// Calculates the factorial of the number.
-  /// The number must be >= 0.
-  static int factorial(int n) {
-    if (n == 0) {
-      return 1;
-    }
-
-    return n * factorial(n - 1);
-  }
-
   public static void main(String[] args) {
-    int num = 5;
-    System.out.println("Factorial of " + num + " is " + factorial(5));
+    // Your Java main code here
   }
 }
-''';
+''',
+  'python': '''
+def main():
+    # Your Python main code here
+    pass
 
-const javaFactorialSectionsSnippet = '''
-class MyClass {
-  /// Calculates the factorial of the number.
-  /// The number must be >= 0.
-  static int factorial(int n) {
-    if (n == 0) {
-      return 1;
-    }
+if __name__ == "__main__":
+    main()
+''',
+  'cpp': '''
+#include <iostream>
 
-    return n * factorial(n - 1);
-  }
-
-  public static void main(String[] args) {// [START section1]
-    int num = 5;
-    System.out.println("Factorial of " + num + " is " + factorial(num));
-  }// [END section1]
-}
-''';
-
-const dartSnippet = r'''
-/// Calculates the factorial of the number.
-/// The number must be >= 0.
-int factorial(int n){
-  if(n == 0){
+int main() {
+    // Your C++ main code here
     return 0;
-  }
-
-  return n * factorial(n - 1);
 }
-
-void main(){
-  int num = 5;
-  print('Factorial of $num is  ${factorial(num)}');
-}
-''';
+'''
+};

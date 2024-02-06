@@ -6,9 +6,9 @@ import 'dropdown_selector.dart';
 import 'snippets.dart';
 import 'package:code_school/Constants/const.dart';
 
-const _defaultLanguage = 'dart';
+const _defaultLanguage = 'java';
 const _defaultTheme = 'monokai-sublime';
-
+var _defaultCode = codeSnippets['java'];
 const _defaultAnalyzer = DefaultLocalAnalyzer();
 final _dartAnalyzer = DartPadAnalyzer();
 
@@ -29,8 +29,8 @@ class CodeScreen extends StatefulWidget {
 class _CodeScreenState extends State<CodeScreen> {
   String _language = _defaultLanguage;
   String _theme = _defaultTheme;
+  String? _code = _defaultCode;
   AbstractAnalyzer _analyzer = _defaultAnalyzer;
-
   bool _showNumbers = true;
   bool _showErrors = true;
   bool _showFoldingHandles = true;
@@ -38,7 +38,7 @@ class _CodeScreenState extends State<CodeScreen> {
   late final _codeController = CodeController(
     language: builtinLanguages[_language],
     namedSectionParser: const BracketsStartEndNamedSectionParser(),
-    text: dartSnippet,
+    text: _code,
   );
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class _CodeScreenState extends State<CodeScreen> {
       _language = value;
       _codeController.language = builtinLanguages[value];
       _analyzer = _defaultAnalyzer;
-
+      _codeController.text =codeSnippets[value]!;
       _codeFieldFocusNode.requestFocus();
     });
   }

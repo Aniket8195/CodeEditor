@@ -1,5 +1,5 @@
 import 'package:highlight/languages/dart.dart';
-import 'package:highlight/languages/go.dart';
+import 'package:highlight/languages/cpp.dart';
 import 'package:highlight/languages/java.dart';
 import 'package:highlight/languages/php.dart';
 import 'package:highlight/languages/python.dart';
@@ -12,12 +12,9 @@ String problemUrl="http://192.168.1.118:3000/api/v1/problem";
 String compileUrl="http://192.168.1.118:3000/api/v1/complie";
 
 const languageList = <String>[
-  'dart',
-  'go',
   'java',
-  'php',
-  'python',
-  'scala',
+  'cpp',
+  'python'
 ];
 
 const themeList = <String>[
@@ -29,10 +26,8 @@ const themeList = <String>[
   'vs2015',
 ];
 final builtinLanguages = {
-  'dart': dart,
-  'go': go,
   'java': java,
-  'php': php,
-  'python': python,
-  'scala': scala,
+  'cpp': cpp,
+  'python': python
 };
+
