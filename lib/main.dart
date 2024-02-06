@@ -7,12 +7,16 @@ import 'Repositories/Storage/jwt_model.dart';
 import 'Routes/routes.dart';
 import 'Theme/light_theme.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:hive_flutter/hive_flutter.dart';
 void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(JWTModelAdapter());
-  await Hive.openBox('jwt');
+
+    await Hive.openBox('jwt');
+
+
   runApp(const MyApp());
 }
 

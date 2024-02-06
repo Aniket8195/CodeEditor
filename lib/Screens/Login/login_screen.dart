@@ -54,8 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    ),
                    ElevatedButton(
                        onPressed: (){
-                         GoRouter.of(context).pushNamed("SignUp");
-
+                         GoRouter.of(context).go("/SignUp");
                        },
                        child: const Text("Sign Up")
                    )
