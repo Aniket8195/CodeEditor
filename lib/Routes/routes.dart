@@ -64,7 +64,7 @@ class MyRouter{
           return RepositoryProvider(
             create: (context)=>ProblemRepo(),
             child: BlocProvider(
-              create: (context)=>HomeBloc(context.read<ProblemRepo>()),
+              create: (context)=>HomeBloc(context.read<ProblemRepo>())..add(LoadingEvent()),
               child: const HomePage(),
             ),
           );
