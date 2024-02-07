@@ -44,7 +44,9 @@ class _CodeScreenState extends State<CodeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BlocProvider(
+  create: (context) =>CompilerBloc(),
+  child: Scaffold(
       backgroundColor: themes[_theme]?['root']?.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -74,34 +76,44 @@ class _CodeScreenState extends State<CodeScreen> {
         ))
         ],
       ),
-      body: ListView(
-        children: [
-          CodeTheme(
-            data: CodeThemeData(styles: themes[_theme]),
-            child: CodeField(
-              focusNode: _codeFieldFocusNode,
-              controller: _codeController,
-              textStyle: const TextStyle(fontFamily: 'SourceCode'),
-              gutterStyle: GutterStyle(
-                textStyle: const TextStyle(
-                  color: Colors.purple,
+      body: Expanded(
+        child: ListView(
+          children: [
+            CodeTheme(
+              data: CodeThemeData(styles: themes[_theme]),
+              child: CodeField(
+                focusNode: _codeFieldFocusNode,
+                controller: _codeController,
+                textStyle: const TextStyle(fontFamily: 'SourceCode'),
+                gutterStyle: GutterStyle(
+                  textStyle: const TextStyle(
+                    color: Colors.purple,
+                  ),
+                  showLineNumbers: _showNumbers,
+                  showErrors: _showErrors,
+                  showFoldingHandles: _showFoldingHandles,
                 ),
-                showLineNumbers: _showNumbers,
-                showErrors: _showErrors,
-                showFoldingHandles: _showFoldingHandles,
               ),
             ),
-          ),
-        ],
+        
+        
+          ],
+        
+        ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           BlocProvider.of<CompilerBloc>(context).add(CompilerSubmit(problem: widget.problem,language: _language,code:_codeController.text));
+
+
         },
         child: const Icon(Icons.send),
       ),
-    );
+    ),
+);
   }
+
   @override
   void dispose() {
     _codeController.dispose();
@@ -135,13 +147,56 @@ class _CodeScreenState extends State<CodeScreen> {
     super.initState();
     BlocProvider.of<CompilerBloc>(context).stream.listen((state) {
       if (state is CompilerSubmitState) {
-        _showResultBottomSheet();
+        showModalBottomSheet(
+          context: context,
+          isDismissible: true,
+          builder: (BuildContext context) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        );
       }
-      if(state is CompilerDone){
-        _showResultBottomSheetR('Compiled Successfully',state.testCases,state.testCaseResults);
+      if (state is CompilerDone) {
+        showModalBottomSheet(
+          context: context,
+          isDismissible: true,
+          builder: (BuildContext context) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.testCases.length,
+                      itemBuilder: (context, index) {
+                        return index > 0
+                            ? ListTile(
+                               title: Text(state.testCases[index].input),
+                                subtitle: Text(state.testCases[index].output),
+                                 trailing: state.testCaseResults[index]
+                              ? const Icon(Icons.check, color: Colors.green)
+                              : const Icon(Icons.close, color: Colors.red),
+                        )
+                            : const SizedBox();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       }
-      if(state is CompilerError){
-        _showResultBottomSheetW(state.message);
+      if (state is CompilerError) {
+        showModalBottomSheet(
+          context: context,
+          isDismissible: true,
+          builder: (BuildContext context) {
+            return Center(
+              child: Text(state.message),
+            );
+          },
+        );
       }
     });
   }
