@@ -44,15 +44,68 @@ class _CodeScreenState extends State<CodeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-  create: (context) =>CompilerBloc(),
+    return
+   BlocListener<CompilerBloc, CompilerState>(
+  listener: (context, state) {
+    if (state is CompilerSubmitState) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible:true,
+        builder: (BuildContext context) {
+          return const  Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+    } else if (state is CompilerDone) {
+      Navigator.of(context).pop();
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        isDismissible: true,
+        builder: (BuildContext context) {
+          return Container(
+            height:MediaQuery.of(context).size.height*0.5,
+            width: MediaQuery.of(context).size.width*1,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("data"),
+                Text(state.testCases.isEmpty?"Empty":"Not Empty"),
+                //Text(state.testCases[0].output),
+                Text(state.testCaseResults.isEmpty?"Empty":"Not Empty"),
+                Text(state.testCases[0].input),
+
+              ],
+            ),
+          );
+        },
+      );
+    } else if (state is CompilerError) {
+      Navigator.of(context).pop();
+      showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Center(
+            child: Text(state.message),
+          );
+        },
+      );
+    }
+  },
   child: Scaffold(
       backgroundColor: themes[_theme]?['root']?.backgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
 
-        Expanded(child: Row(
+        Expanded(
+            flex: 1,
+            child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             DropdownSelector(
@@ -76,34 +129,33 @@ class _CodeScreenState extends State<CodeScreen> {
         ))
         ],
       ),
-      body: Expanded(
-        child: ListView(
-          children: [
-            CodeTheme(
-              data: CodeThemeData(styles: themes[_theme]),
-              child: CodeField(
-                focusNode: _codeFieldFocusNode,
-                controller: _codeController,
-                textStyle: const TextStyle(fontFamily: 'SourceCode'),
-                gutterStyle: GutterStyle(
-                  textStyle: const TextStyle(
-                    color: Colors.purple,
-                  ),
-                  showLineNumbers: _showNumbers,
-                  showErrors: _showErrors,
-                  showFoldingHandles: _showFoldingHandles,
+      body: ListView(
+        children: [
+          CodeTheme(
+            data: CodeThemeData(styles: themes[_theme]),
+            child: CodeField(
+              focusNode: _codeFieldFocusNode,
+              controller: _codeController,
+              textStyle: const TextStyle(fontFamily: 'SourceCode'),
+              gutterStyle: GutterStyle(
+                textStyle: const TextStyle(
+                  color: Colors.purple,
                 ),
+                showLineNumbers: _showNumbers,
+                showErrors: _showErrors,
+                showFoldingHandles: _showFoldingHandles,
               ),
             ),
-        
-        
-          ],
-        
-        ),
+          ),
+
+
+        ],
+
       ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          print(_codeController.text);
           BlocProvider.of<CompilerBloc>(context).add(CompilerSubmit(problem: widget.problem,language: _language,code:_codeController.text));
 
 
@@ -112,6 +164,7 @@ class _CodeScreenState extends State<CodeScreen> {
       ),
     ),
 );
+
   }
 
   @override
@@ -145,105 +198,60 @@ class _CodeScreenState extends State<CodeScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<CompilerBloc>(context).stream.listen((state) {
-      if (state is CompilerSubmitState) {
-        showModalBottomSheet(
-          context: context,
-          isDismissible: true,
-          builder: (BuildContext context) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        );
-      }
-      if (state is CompilerDone) {
-        showModalBottomSheet(
-          context: context,
-          isDismissible: true,
-          builder: (BuildContext context) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: state.testCases.length,
-                      itemBuilder: (context, index) {
-                        return index > 0
-                            ? ListTile(
-                               title: Text(state.testCases[index].input),
-                                subtitle: Text(state.testCases[index].output),
-                                 trailing: state.testCaseResults[index]
-                              ? const Icon(Icons.check, color: Colors.green)
-                              : const Icon(Icons.close, color: Colors.red),
-                        )
-                            : const SizedBox();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-      if (state is CompilerError) {
-        showModalBottomSheet(
-          context: context,
-          isDismissible: true,
-          builder: (BuildContext context) {
-            return Center(
-              child: Text(state.message),
-            );
-          },
-        );
-      }
-    });
-  }
-  void _showResultBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
+    // BlocProvider.of<CompilerBloc>(context).stream.listen((state) {
+    //   if (state is CompilerSubmitState) {
+    //     showModalBottomSheet(
+    //       context: context,
+    //       isDismissible: true,
+    //       builder: (BuildContext context) {
+    //         return const Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       },
+    //     );
+    //   }
+    //   if (state is CompilerDone) {
+    //     showModalBottomSheet(
+    //       context: context,
+    //       isDismissible: true,
+    //       builder: (BuildContext context) {
+    //         return SingleChildScrollView(
+    //           child: Column(
+    //             children: [
+    //               Expanded(
+    //                 child: ListView.builder(
+    //                   itemCount: state.testCases.length,
+    //                   itemBuilder: (context, index) {
+    //                     return index > 0
+    //                         ? ListTile(
+    //                            title: Text(state.testCases[index].input),
+    //                             subtitle: Text(state.testCases[index].output),
+    //                              trailing: state.testCaseResults[index]
+    //                           ? const Icon(Icons.check, color: Colors.green)
+    //                           : const Icon(Icons.close, color: Colors.red),
+    //                     )
+    //                         : const SizedBox();
+    //                   },
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   }
+    //   if (state is CompilerError) {
+    //     showModalBottomSheet(
+    //       context: context,
+    //       isDismissible: true,
+    //       builder: (BuildContext context) {
+    //         return Center(
+    //           child: Text(state.message),
+    //         );
+    //       },
+    //     );
+    //   }
+    // });
   }
 
-  void _showResultBottomSheetW(String result) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: Text(result),
-        );
-      },
-    );
-  }
-  void _showResultBottomSheetR(String result,List<TestCase>testCases,List<bool>testCaseResults) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                ListView.builder(
-                 // shrinkWrap: true,
-                  itemCount: testCases.length,
-                  itemBuilder: (context,index) {
-                     return (index > 0) ? ListTile(
-                      title: Text(testCases[index].input),
-                      subtitle: Text(testCases[index].output),
-                      trailing: testCaseResults[index]?const Icon(Icons.check,color: Colors.green,):const Icon(Icons.close,color: Colors.red,),
-                    ) : const SizedBox();
-                  },
-                ),
-              ],
-            ),
-          );
-
-      },
-    );
-  }
 }
