@@ -72,11 +72,30 @@ class _CodeScreenState extends State<CodeScreen> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("data"),
-                Text(state.testCases.isEmpty?"Empty":"Not Empty"),
-                //Text(state.testCases[0].output),
-                Text(state.testCaseResults.isEmpty?"Empty":"Not Empty"),
-                Text(state.testCases[0].input),
+               //  Text("data"),
+               //  Text(state.testCases.isEmpty?"Empty":"Not Empty ${state.testCaseResults.length}"),
+               //  Text(state.testCases[0].output),
+               // Text(state.testCaseResults.isEmpty?"Empty":"Not Empty ${state.testCaseResults.length}"),
+               //  Text(state.testCases[0].input),
+                (state.testCaseResults.isEmpty&& state.testCaseResults.isEmpty)? Container(
+                  child: Text("Failed to compile"),
+                )
+                :Expanded(
+                  child: ListView.builder(
+                    itemCount: state.testCases.length,
+                    itemBuilder: (context, index) {
+                      return index >= 0
+                          ? ListTile(
+                        title: Text(state.testCases[index].input),
+                        subtitle: Text(state.testCases[index].output),
+                        trailing: state.testCaseResults[index]
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : const Icon(Icons.close, color: Colors.red),
+                      )
+                          : const SizedBox();
+                    },
+                  ),
+                ),
 
               ],
             ),
