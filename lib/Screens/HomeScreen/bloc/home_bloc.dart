@@ -23,13 +23,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
     on<LogoutEvent>((event, emit)async {
       try{
-        //logoutM();
-        var box = await Hive.openBox('jwt');
-        var item=box.values.toList();
-        print("token : ${item[0].jwt}");
-        Hive.box('jwt').clear();
-        print("token : ${item[0].jwt}");
-        print("Logged out");
+         logoutM();
+        // var box = await Hive.openBox('jwt');
+        // var item=box.values.toList();
+        // print("token : ${item[0].jwt}");
+        // Hive.box('jwt').clear();
+        // print("token : ${item[0].jwt}");
+        // print("Logged out");
         emit(Logout());
       }catch(error){
         emit(ErrorState(message: error.toString()));
